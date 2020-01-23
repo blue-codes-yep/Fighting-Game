@@ -18,8 +18,12 @@ pygame.display.set_caption("Fighting Game")
 playerImg = pygame.image.load('images/charcterfiller.png')
 playerX = 150
 playerY = 110
+playerX_change = 0
+
 def player(x,y):
     screen.blit(playerImg,(x,y))
+
+# Background
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
@@ -36,8 +40,18 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    # If keystroke is pressed check right, left.
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            playerX_change = -2.0
+        if event.key == pygame.K_RIGHT:
+            playerX_change = 2.0
+    if event.type == pygame.KEYUP:
+        if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+            playerX_change = 0
     
     screen.blit(BackGround.image, BackGround.rect)
+    playerX += playerX_change
     player(playerX,playerY)
     pygame.display.flip()
 
