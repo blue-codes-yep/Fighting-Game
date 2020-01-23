@@ -4,7 +4,7 @@ from pygame.locals import *
 pygame.init()
 
 # Create the screen 
-screen = pygame.display.set_mode((300, 180))
+screen = pygame.display.set_mode((900, 567))
 
 
 #Title and Icon
@@ -28,11 +28,11 @@ def player(x,y):
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
-        self.image = pygame.image.load('images/image.png')
+        self.image = pygame.image.load('images/background.png')
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
-BackGround = Background('image.png', [0,0])
+BackGround = Background('background.png', [0,0])
 
 #  Game Loop
 running = True
