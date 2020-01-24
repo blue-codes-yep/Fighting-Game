@@ -74,7 +74,6 @@ for i in range( 50 ):
     z = ZombieEnemy(new_x)
     all_zombies.add(z)         # create, and add to group
     z.move_towards_player(man)
-
     #####
 while run:
     clock.tick(27)
@@ -118,8 +117,7 @@ while run:
             man.jumpCount = 10
             
     # redrawGameWindow()
-    for zombie in all_zombies:
-        zombie.move_towards_player(man)
+    
     
     win.blit(BackGround.image, BackGround.rect)
     all_zombies.update()
@@ -127,5 +125,7 @@ while run:
     all_zombies.draw(win)
     pygame.display.flip()
     
+
+pygame.quit()
 
 pygame.quit()
