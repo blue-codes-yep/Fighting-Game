@@ -6,7 +6,7 @@ import math
 # Player = player()
 
 class ZombieEnemy(pygame.sprite.Sprite):
-    def __init__(self, x=300, y=360):
+    def __init__(self, x=300, y=450):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('images/zombie.png')
         self.rect = self.image.get_rect()
