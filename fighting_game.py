@@ -95,7 +95,7 @@ all_zombies = pygame.sprite.Group()
 #mainloop
 man = Player(100, 340, 40, 60)
 run = True
-
+# Zombie Stuff:
 for i in range( 50 ):
     new_x = random.randrange( 0, 10000)       # random x-position
     z = ZombieEnemy(new_x)
