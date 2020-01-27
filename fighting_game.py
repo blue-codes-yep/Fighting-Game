@@ -2,25 +2,21 @@ import pygame
 import math
 import random
 from Zombie import *
-# from pygame.locals import *
+
 pygame.init()
 
 win = pygame.display.set_mode((900,567))
 pygame.display.set_caption("Power Rangers ZOMBIES")
 WHITE = (255,255,255)
-# font_name = pygame.font.match_font('arial')
-# def draw_text(surf, text, x, y):
-#     font = pygame.font.Font(font_name, size)
-#     text_surface = font.render(text, True, WHITE)
-#     text_rect = text_surface.get_rect()
-#     text_rect.midtop = (x, y)
-#     surf.blit(text_surface, text_rect)
 
-
+#add music
+song = 'theme2.ogg'
+pygame.mixer.music.load(song)
 
 walkRight = [pygame.image.load('images/walk1.png'), pygame.image.load('images/walk2.png'), pygame.image.load('images/walk3.png'), pygame.image.load('images/walk4.png'), pygame.image.load('images/walk5.png'), pygame.image.load('images/walk6.png')]
 walkLeft = [pygame.image.load('images/leftwalk2.png'), pygame.image.load('images/leftwalk3.png'), pygame.image.load('images/leftwalk4.png'), pygame.image.load('images/leftwalk5.png'), pygame.image.load('images/leftwalk6.png'), pygame.image.load('images/leftwalk7.png')]
 bg = pygame.image.load('images/background.png')
+attackTime = [pygame.image.load('images/sliceplaceholder.png')]
 char = pygame.image.load('images/standingstill.png')
 clock = pygame.time.Clock()
 
@@ -34,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.isJump = False
         self.left = False
         self.right = False
+        self.attack = False
         self.walkCount = 0
         self.jumpCount = 10
         self.rect.x = x
@@ -42,13 +39,14 @@ class Player(pygame.sprite.Sprite):
     def draw(self, win):
         if self.walkCount + 1 >= 18:
             self.walkCount = 0
-
         if self.left:
             win.blit(walkLeft[self.walkCount//3], (self.rect.x,self.rect.y))
             self.walkCount += 1
         elif self.right:
             win.blit(walkRight[self.walkCount//3], (self.rect.x,self.rect.y))
             self.walkCount +=1
+        elif self.attack:
+            win.blit(attackTime[self.walkCount//3], (self.rect.x,self.rect.y))
         else:
             win.blit(char, (self.rect.x,self.rect.y))
 
@@ -59,33 +57,65 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
+### added for titlescreen
+class Titlescreen(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('images/titlescreen1.png')
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
+### added for titlescreen
+TitleScreen = Titlescreen('images/titlescreen1.png', [0,0])
+BackGround = Background('images/background.png', [0,0])
+### added for titlescreen
+def game_intro():
+
+    intro = True
+
+    while intro == True:
+        for event in pygame.event.get():
+            print(event)
+            keys = pygame.key.get_pressed()
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        win.blit(TitleScreen.image, TitleScreen.rect)
+        pygame.display.update()
+        intro = False
+        clock.tick(0.5)
+
 BackGround = Background('images/background.png', [0,0])
 
-# def redrawGameWindow():
-#     win.blit(bg, (0,0))
-#     man.draw(win)
-    
-#     pygame.display.update()
 all_zombies = pygame.sprite.Group()
 
-
-
-
+#
 
 #mainloop
 man = Player(100, 340, 40, 60)
 run = True
 
-for i in range( 100 ):
-    new_x = random.randrange( 0, 100000)       # random x-position
-    # new_y = random.randrange( 0, )      # random y-position
+for i in range( 50 ):
+    new_x = random.randrange( 0, 10000)       # random x-position
     z = ZombieEnemy(new_x)
     all_zombies.add(z)         # create, and add to group
     z.move_towards_player(man)
 
     #####
+textbesidescore = 'Score: '
+score = 0
 
-score = 0 
+#music time
+pygame.mixer.music.play(-1)
+### added for titlescreen
+while game_intro():
+        if keys[pygame.K_SEMICOLON]:
+            intro = False
+            break
+        else:
+            game_intro()
+
 while run:
     clock.tick(27)
 
@@ -93,9 +123,8 @@ while run:
         if event.type == pygame.QUIT:
             run = False
     ## Collide
-    if pygame.sprite.spritecollide(man, all_zombies, False):
+    if pygame.sprite.spritecollide(man, all_zombies, dokill=True):
        score += 1
-       pygame.display.set_caption(str(score)) 
        print(score)
 
         
@@ -112,9 +141,16 @@ while run:
         man.rect.x += man.vel
         man.right = True
         man.left = False
+        #### attack
+    elif keys[pygame.K_UP]: 
+        man.right = False
+        man.left = False
+        man.attack = True
+        man.walkCount = 0
     else:
         man.right = False
         man.left = False
+        man.attack = False
         man.walkCount = 0
         
     if not(man.isJump):
@@ -145,7 +181,9 @@ while run:
     
     font = pygame.font.Font(None, 74)
     text = font.render(str(score), 1, WHITE)
-    win.blit(text, (250,10))
+    text2 = font.render(textbesidescore, 1, WHITE)
+    win.blit(text, (490, 14))
+    win.blit(text2, (330,11))
     pygame.display.flip()
     
 
